@@ -1,0 +1,320 @@
+.voice-input-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 25px; /* Space for the amplitude visualization */
+}
+
+.voice-input-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible; /* Allow amplitude bars to be visible outside button */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.voice-input-button:hover {
+  transform: scale(1.05);
+  background-color: #e9e9e9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.voice-input-button:active {
+  transform: scale(0.95);
+}
+
+.voice-input-button.listening {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  animation: pulse 1.5s infinite;
+  z-index: 1; /* Ensure button stays above amplitude visualization */
+}
+
+.voice-input-button.processing {
+  background-color: #f0ad4e; /* Orange/amber color */
+  border-color: #f0ad4e;
+  animation: pulse 0.8s infinite;
+}
+
+.voice-input-button.error {
+  background-color: #d9534f; /* Red color */
+  border-color: #d9534f;
+  animation: shake 0.5s ease-in-out;
+}
+
+.voice-input-button.speaking {
+  background-color: #5bc0de; /* Light blue color */
+  border-color: #5bc0de;
+  animation: pulse 1s infinite;
+}
+
+.voice-input-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Status indicator */
+.status-indicator {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.status-indicator.listening {
+  background-color: #5cb85c; /* Green */
+  animation: blink 1s infinite;
+}
+
+.status-indicator.processing {
+  background-color: #f0ad4e; /* Orange/amber */
+  animation: blink 0.5s infinite;
+}
+
+.status-indicator.error {
+  background-color: #d9534f; /* Red */
+}
+
+.status-indicator.speaking {
+  background-color: #5bc0de; /* Light blue */
+  animation: blink 0.7s infinite;
+}
+
+/* Interim transcript display */
+.interim-transcript {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 4px 8px;
+  min-width: 150px;
+  max-width: 300px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.transcript-text {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listening-indicator {
+  font-size: 0.7rem;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+.processing-indicator {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  color: #f0ad4e;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  animation: pulse 1.5s infinite;
+}
+
+.speaking-indicator {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  color: #5bc0de;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  animation: pulse 1s infinite;
+}
+
+/* SVG microphone icon */
+.microphone-svg {
+  transition: all 0.3s ease;
+}
+
+.listening .microphone-svg {
+  transform: scale(1.1);
+}
+
+/* Voice amplitude visualization */
+.voice-amplitude {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2px;
+  height: 20px;
+  width: 80px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.amplitude-bar {
+  width: 4px;
+  min-height: 3px;
+  border-radius: 2px;
+  background-color: var(--accent-color);
+  box-shadow: 0 0 4px rgba(0, 102, 204, 0.5);
+  transition: height 0.1s ease, opacity 0.1s ease, background-color 0.2s ease;
+  animation: amplitude-pulse 1.5s infinite;
+  transform-origin: bottom;
+}
+
+.amplitude-bar:nth-child(1) { animation-delay: 0.0s; }
+.amplitude-bar:nth-child(2) { animation-delay: 0.1s; }
+.amplitude-bar:nth-child(3) { animation-delay: 0.2s; }
+.amplitude-bar:nth-child(4) { animation-delay: 0.3s; }
+.amplitude-bar:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes amplitude-pulse {
+  0% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.1);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Sound waves (fallback animation) */
+.sound-waves {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.wave.active {
+  opacity: 1;
+}
+
+.wave-1 {
+  width: 20px;
+  height: 20px;
+}
+
+.wave-2 {
+  width: 26px;
+  height: 26px;
+}
+
+.wave-3 {
+  width: 32px;
+  height: 32px;
+}
+
+.voice-input-error {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: #dc3545;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 2px 8px;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 102, 204, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 102, 204, 0);
+  }
+}
+
+/* Fix for TypeScript */
+@keyframes wave {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
